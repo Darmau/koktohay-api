@@ -29,7 +29,9 @@ import * as process from "process";
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST.toString(),
-        port: Number(process.env.REDIS_PORT)
+        port: Number(process.env.REDIS_PORT),
+        username: process.env.REDIS_USER.toString(),
+        password: process.env.REDIS_PASSWORD.toString(),
       },
     }),
     // rate limit
