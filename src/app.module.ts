@@ -15,6 +15,7 @@ import { LanguageModule } from '@/settings/language/language.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CategoryModule } from './category/category.module';
 import { SettingsModule } from '@/settings/settings.module';
+import * as process from "process";
 
 @Module({
   imports: [
@@ -27,8 +28,8 @@ import { SettingsModule } from '@/settings/settings.module';
     // connect to redis for queue task
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
-        port: 6379,
+        host: 'process.env.REDIS_HOST',
+        port: Number(process.env.REDIS_PORT),
       },
     }),
     // rate limit
