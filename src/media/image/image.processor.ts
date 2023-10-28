@@ -41,9 +41,8 @@ export class ImageProcessor {
     if (imageData.format === 'svg' || imageData.format === 'gif') {
       return HttpStatus.OK;
     }
-    this.logger.debug(`Processing ${fileName}.${imageData.format}`);
+
     const S3Config = await this.configService.getS3Config();
-    this.logger.debug(JSON.stringify(S3Config));
 
     // 从imageData.raw中下载图片并转换为buffer
     const getCommand = new GetObjectCommand({
