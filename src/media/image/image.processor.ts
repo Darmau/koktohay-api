@@ -41,14 +41,16 @@ export class ImageProcessor {
     if (imageData.format === 'svg' || imageData.format === 'gif') {
       return HttpStatus.OK;
     }
+    this.logger.debug(`Processing ${fileName}.${imageData.format}`);
+    const S3Config = await this.configService.getS3Config();
+    this.logger.debug(JSON.stringify(S3Config));
 
     // 从imageData.raw中下载图片并转换为buffer
     const getCommand = new GetObjectCommand({
-      Bucket: process.env.S3_BUCKET,
+      Bucket: S3Config.S3_BUCKET,
       Key: imageData.raw,
     });
 
-    const S3Config = await this.configService.getS3Config();
     const S3 = new S3Client({
       region: S3Config.S3_REGION,
       endpoint: S3Config.S3_ENDPOINT,
@@ -81,7 +83,7 @@ export class ImageProcessor {
         const convertedImage = await this.convertImage(format, resizedImage);
         const key = `${folder}/${fileName}-${label}.${format}`;
         this.logger.debug(`Uploading ${key}`);
-        await uploadToR2(key, convertedImage);
+        await uploadToR2(key, convertedImage, S3Config);
         imageStack[label][format] = key;
       }
     }

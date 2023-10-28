@@ -4,7 +4,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, Logger,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
@@ -25,6 +25,8 @@ export class ImageController {
     private readonly imageService: ImageService,
   ) {}
 
+  private readonly logger = new Logger(ImageController.name);
+
   // 上传图片
   // /image/upload POST
   @Post('upload')
@@ -38,9 +40,11 @@ export class ImageController {
     image: Express.Multer.File,
   ) {
     // 上传原始图片
+    this.logger.debug('Uploading raw image');
     const rawImageData = await this.imageService.extractExifAndUploadRaw(image);
 
     // 将图片处理任务加入队列，异步执行
+    this.logger.debug('Adding image process task to queue');
     await this.imageQueue.add(
       'image-process',
       {
