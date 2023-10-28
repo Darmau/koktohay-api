@@ -28,8 +28,8 @@ import * as process from "process";
     // connect to redis for queue task
     BullModule.forRoot({
       redis: {
-        host: 'process.env.REDIS_HOST',
-        port: Number(process.env.REDIS_PORT),
+        host: process.env.REDIS_HOST.toString(),
+        port: Number(process.env.REDIS_PORT)
       },
     }),
     // rate limit

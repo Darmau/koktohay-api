@@ -46,8 +46,11 @@ export class ImageService {
       );
     }
 
+    // 获取cloudflare配置
+    const S3Config = await this.configService.getS3Config();
+
     // 上传原始文件
-    const { upload_time, key } = await new UploadRawImage(file).upload();
+    const { upload_time, key } = await new UploadRawImage(file, S3Config).upload();
 
     // 提取基础信息
     const metadata = await sharp(file.buffer).metadata();
@@ -159,7 +162,13 @@ export class ImageService {
     if (!images) {
       throw new HttpException('No image for now', HttpStatus.NOT_FOUND);
     }
-    const thumbnails = images.map((image) => image.small);
+    const thumbnails = images.map((image) => {
+      const urls = {};
+      for (const format in image.small) {
+        urls[format] = `${this.prefix}/${image.small[format]}`;
+      }
+      return urls;
+    });
     return thumbnails;
   }
 
@@ -172,7 +181,10 @@ export class ImageService {
     }
     const { folder, fileName } = extractFolderName(imageData.raw);
     const key = `${folder}/${fileName}-raw.${format}`;
-    await uploadToR2(key, file.buffer);
+    // 获取cloudflare配置
+    const S3Config = await this.configService.getS3Config();
+
+    await uploadToR2(key, file.buffer, S3Config);
     return imageData;
   }
 
