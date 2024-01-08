@@ -17,7 +17,7 @@ export class ConfigService {
     if (!mapApi) {
       throw new HttpException('No map API found', HttpStatus.NOT_FOUND);
     }
-    return mapApi.config.AMAP_KEY;
+    return mapApi.config;
   }
 
   // 修改地图API
