@@ -28,6 +28,7 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/platform-express": "^10.2.7",
     "@nestjs/throttler": "^5.0.0",
+    "@prisma/client": "5.7.1",
     "bull": "^4.11.4",
     "class-validator": "^0.14.0",
     "exifr": "^7.1.3",
