@@ -1,8 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Prisma, language } from '@prisma/client';
 import {PrismaService} from "@/prisma/prisma.service";
+import {Language} from "@/schemas/language.schema";
 
 @Injectable()
 export class LanguageService {
@@ -25,18 +23,20 @@ export class LanguageService {
   }
 
   // 返回默认语言
-  // async getDefaultLanguage(): Promise<Language> {
-  //   const language = await this.languageModel
-  //     .findOne({ isDefault: true })
-  //     .exec();
-  //   if (!language) {
-  //     throw new HttpException(
-  //       'No default language found',
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-  //   return language;
-  // }
+  async getDefaultLanguage() {
+    const language = this.prisma.language.findFirst({
+      where: {
+        is_default: true
+      }
+    })
+    if (!language) {
+      throw new HttpException(
+        'No default language found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return language;
+  }
 
   // 增加语言
   // async addLanguage(lang: string, locale: string): Promise<Language> {

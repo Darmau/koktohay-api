@@ -23,23 +23,23 @@ export class LanguageController {
   }
 
   // 增加语言 /language/add POST
-  @Post('add')
-  async addLanguage(@Body() addLangDto: AddLangDto) {
-    return await this.languageService.addLanguage(
-      addLangDto.lang,
-      addLangDto.locale,
-    );
-  }
+  // @Post('add')
+  // async addLanguage(@Body() addLangDto: AddLangDto) {
+  //   return await this.languageService.addLanguage(
+  //     addLangDto.lang,
+  //     addLangDto.locale,
+  //   );
+  // }
 
   // 切换默认语言 /language/default?lang= PATCH
-  @Patch('default')
-  async updateDefaultLanguage(@Query('lang') lang: string) {
-    return await this.languageService.updateDefaultLanguage(lang);
-  }
+  // @Patch('default')
+  // async updateDefaultLanguage(@Query('lang') lang: string) {
+  //   return await this.languageService.updateDefaultLanguage(lang);
+  // }
 
   // 删除语言 /language/delete?lang= DELETE
-  @Delete('delete')
-  async deleteLanguage(@Query('lang') lang: string) {
-    return await this.languageService.deleteLanguage(lang);
-  }
+//   @Delete('delete')
+//   async deleteLanguage(@Query('lang') lang: string) {
+//     return await this.languageService.deleteLanguage(lang);
+//   }
 }
