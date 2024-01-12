@@ -13,6 +13,7 @@ import { ImageSchema } from '@/schemas/image.schema';
 import { VideoSchema } from '@/schemas/video.schema';
 import { ConfigService } from '@/settings/config/config.service';
 import { SettingsSchema } from '@/schemas/settings.schema';
+import {PrismaModule} from "@/prisma/prisma.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SettingsSchema } from '@/schemas/settings.schema';
     MongooseModule.forFeature([{ name: 'Photo', schema: PhotoSchema }]),
     MongooseModule.forFeature([{ name: 'Video', schema: VideoSchema }]),
     MongooseModule.forFeature([{ name: 'Settings', schema: SettingsSchema }]),
+    PrismaModule
   ],
   controllers: [ArticleController],
   providers: [
