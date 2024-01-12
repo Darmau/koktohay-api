@@ -15,6 +15,7 @@ import { LanguageModule } from '@/settings/language/language.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CategoryModule } from './category/category.module';
 import { SettingsModule } from '@/settings/settings.module';
+import { PrismaModule } from './prisma/prisma.module';
 import * as process from "process";
 
 @Module({
@@ -51,6 +52,7 @@ import * as process from "process";
     LanguageModule,
     CategoryModule,
     SettingsModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

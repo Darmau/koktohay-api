@@ -13,6 +13,7 @@ import { EntrySchema } from '@/schemas/entry.schema';
 import { ImageSchema } from '@/schemas/image.schema';
 import { SettingsSchema } from '@/schemas/settings.schema';
 import { ConfigService } from '@/settings/config/config.service';
+import {PrismaModule} from "@/prisma/prisma.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigService } from '@/settings/config/config.service';
     MongooseModule.forFeature([{ name: 'Entry', schema: EntrySchema }]),
     MongooseModule.forFeature([{ name: 'Image', schema: ImageSchema }]),
     MongooseModule.forFeature([{ name: 'Settings', schema: SettingsSchema }]),
+    PrismaModule
   ],
   controllers: [PhotoController],
   providers: [
