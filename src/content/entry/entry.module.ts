@@ -8,6 +8,7 @@ import { PhotoSchema } from '@/schemas/photo.schema';
 import { ArticleSchema } from '@/schemas/article.schema';
 import { VideoSchema } from '@/schemas/video.schema';
 import { LanguageSchema } from '@/schemas/language.schema';
+import {PrismaModule} from "@/prisma/prisma.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { LanguageSchema } from '@/schemas/language.schema';
     MongooseModule.forFeature([{ name: 'Article', schema: ArticleSchema }]),
     MongooseModule.forFeature([{ name: 'Photo', schema: PhotoSchema }]),
     MongooseModule.forFeature([{ name: 'Video', schema: VideoSchema }]),
+    PrismaModule
   ],
   controllers: [EntryController],
   providers: [EntryService, LanguageService],
