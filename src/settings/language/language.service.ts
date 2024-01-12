@@ -13,6 +13,7 @@ export class LanguageService {
       select: {
         lang: true,
         locale: true,
+        is_default: true,
       }
     });
     if (!languages) {
@@ -74,7 +75,7 @@ export class LanguageService {
       }
     });
     return {
-      status: 'success',
+      status: 'Success',
       lang: newLanguage.lang,
       locale: newLanguage.locale,
       isDefault: newLanguage.is_default,
@@ -108,7 +109,7 @@ export class LanguageService {
       }
     });
     return {
-      status: 'success',
+      status: 'Success',
       lang: lang,
       isDefault: true,
     };
@@ -116,19 +117,49 @@ export class LanguageService {
 
   // 删除语言
   async deleteLanguage(lang: string) {
-    const language = await this.languageModel.findOne({ lang: lang }).exec();
-    if (!language) {
+    try {
+      await this.prisma.language.delete({
+        where: {
+          lang: lang
+        }
+      });
+    } catch (e) {
       throw new HttpException('Language not found', HttpStatus.NOT_FOUND);
     }
-    await this.languageModel.findOneAndRemove({ lang: lang }).exec();
-    const languageCount = await this.languageModel.countDocuments().exec();
-    // 如果只剩一个语言，找到那个语言，将isDefault设为true
-    if (languageCount === 1) {
-      const lastLanguage = await this.languageModel.findOne().exec();
-      await this.languageModel
-        .findOneAndUpdate({ lang: lastLanguage.lang }, { isDefault: true })
-        .exec();
+
+    const defaultLanguage = await this.prisma.language.findFirst({
+      where: {
+        is_default: true
+      }
+    });
+
+    if (!defaultLanguage) {
+      const remainingLanguages = await this.prisma.language.findMany({
+        where: {
+          lang: {
+            not: lang
+          }
+        }
+      });
+
+      if (remainingLanguages.length > 0) {
+        const firstLanguage = remainingLanguages[0];
+
+        await this.prisma.language.update({
+          where: {
+            id: firstLanguage.id
+          },
+          data: {
+            is_default: true
+          }
+        });
+      }
     }
-    return this.getAllLanguages();
+
+    return {
+      status: 'Success',
+      lang: lang,
+    }
   }
+
 }

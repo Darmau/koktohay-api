@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpException, HttpStatus,
   Logger,
   Patch,
   Post,
@@ -34,12 +34,15 @@ export class LanguageController {
   // 切换默认语言 /language/default?lang= PATCH
   @Patch('default')
   async updateDefaultLanguage(@Query('lang') lang: string) {
+    if(!lang) {
+      throw new HttpException('No language specified', HttpStatus.BAD_REQUEST)
+    }
     return await this.languageService.updateDefaultLanguage(lang);
   }
 
   // 删除语言 /language/delete?lang= DELETE
-//   @Delete('delete')
-//   async deleteLanguage(@Query('lang') lang: string) {
-//     return await this.languageService.deleteLanguage(lang);
-//   }
+  @Delete('delete')
+  async deleteLanguage(@Query('lang') lang: string) {
+    return await this.languageService.deleteLanguage(lang);
+  }
 }
