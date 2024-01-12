@@ -17,6 +17,7 @@ import { CategoryModule } from './category/category.module';
 import { SettingsModule } from '@/settings/settings.module';
 import { PrismaModule } from './prisma/prisma.module';
 import * as process from "process";
+import '@/extensions/bigint.extension';
 
 @Module({
   imports: [
