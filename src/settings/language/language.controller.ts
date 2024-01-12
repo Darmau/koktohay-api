@@ -32,10 +32,10 @@ export class LanguageController {
   }
 
   // 切换默认语言 /language/default?lang= PATCH
-  // @Patch('default')
-  // async updateDefaultLanguage(@Query('lang') lang: string) {
-  //   return await this.languageService.updateDefaultLanguage(lang);
-  // }
+  @Patch('default')
+  async updateDefaultLanguage(@Query('lang') lang: string) {
+    return await this.languageService.updateDefaultLanguage(lang);
+  }
 
   // 删除语言 /language/delete?lang= DELETE
 //   @Delete('delete')

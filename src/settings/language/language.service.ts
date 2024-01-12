@@ -9,7 +9,7 @@ export class LanguageService {
 
   // 获取所有语言
   async getAllLanguages() {
-    const languages = this.prisma.language.findMany({
+    const languages = await this.prisma.language.findMany({
       select: {
         lang: true,
         locale: true,
@@ -23,9 +23,13 @@ export class LanguageService {
 
   // 返回默认语言
   async getDefaultLanguage() {
-    const language = this.prisma.language.findFirst({
+    const language = await this.prisma.language.findFirst({
       where: {
         is_default: true
+      },
+      select: {
+        lang: true,
+        locale: true,
       }
     })
     if (!language) {
@@ -54,7 +58,7 @@ export class LanguageService {
       );
     }
     // 检测是否存在其他语言，如果没有，则设为默认语言
-    const languages = this.prisma.language.findFirst({
+    const languages = await this.prisma.language.findFirst({
       where: {
         is_default: {
           equals: true
@@ -73,39 +77,58 @@ export class LanguageService {
       status: 'success',
       lang: newLanguage.lang,
       locale: newLanguage.locale,
+      isDefault: newLanguage.is_default,
     };
   }
 
   // 修改默认语言
-  // async updateDefaultLanguage(lang: string): Promise<Language> {
-  //   const language = await this.languageModel.findOne({ lang: lang }).exec();
-  //   if (!language) {
-  //     throw new HttpException('Language not exist', HttpStatus.NOT_FOUND);
-  //   }
-  //   await this.languageModel
-  //     .findOneAndUpdate({ isDefault: true }, { isDefault: false })
-  //     .exec();
-  //   await this.languageModel
-  //     .findOneAndUpdate({ lang: lang }, { isDefault: true })
-  //     .exec();
-  //   return this.languageModel.findOne({ isDefault: true }).exec();
-  // }
+  async updateDefaultLanguage(lang: string) {
+    const existLanguage = await this.prisma.language.findUnique({
+      where: {
+        lang: lang
+      }
+    });
+    if (!existLanguage) {
+      throw new HttpException('Language not found', HttpStatus.NOT_FOUND);
+    }
+    await this.prisma.language.updateMany({
+      where: {
+        is_default: true
+      },
+      data: {
+        is_default: false
+      }
+    });
+    await this.prisma.language.update({
+      where: {
+        lang: lang
+      },
+      data: {
+        is_default: true
+      }
+    });
+    return {
+      status: 'success',
+      lang: lang,
+      isDefault: true,
+    };
+  }
 
   // 删除语言
-//   async deleteLanguage(lang: string): Promise<Language[]> {
-//     const language = await this.languageModel.findOne({ lang: lang }).exec();
-//     if (!language) {
-//       throw new HttpException('Language not found', HttpStatus.NOT_FOUND);
-//     }
-//     await this.languageModel.findOneAndRemove({ lang: lang }).exec();
-//     const languageCount = await this.languageModel.countDocuments().exec();
-//     // 如果只剩一个语言，找到那个语言，将isDefault设为true
-//     if (languageCount === 1) {
-//       const lastLanguage = await this.languageModel.findOne().exec();
-//       await this.languageModel
-//         .findOneAndUpdate({ lang: lastLanguage.lang }, { isDefault: true })
-//         .exec();
-//     }
-//     return this.getAllLanguages();
-//   }
+  async deleteLanguage(lang: string) {
+    const language = await this.languageModel.findOne({ lang: lang }).exec();
+    if (!language) {
+      throw new HttpException('Language not found', HttpStatus.NOT_FOUND);
+    }
+    await this.languageModel.findOneAndRemove({ lang: lang }).exec();
+    const languageCount = await this.languageModel.countDocuments().exec();
+    // 如果只剩一个语言，找到那个语言，将isDefault设为true
+    if (languageCount === 1) {
+      const lastLanguage = await this.languageModel.findOne().exec();
+      await this.languageModel
+        .findOneAndUpdate({ lang: lastLanguage.lang }, { isDefault: true })
+        .exec();
+    }
+    return this.getAllLanguages();
+  }
 }
