@@ -59,7 +59,7 @@ export class ConfigService {
 
   // 一次性获取所有S3相关配置
   async getS3Config() {
-    return this.prisma.config.findMany({
+    const configs = await this.prisma.config.findMany({
       where: {
         name: {
           startsWith: 'S3'
@@ -70,5 +70,9 @@ export class ConfigService {
         value: true
       }
     });
+    // 将[{key, value}, {key, value}]转换为{key: value, key: value}
+    return configs.reduce((acc, cur) => {
+      return { ...acc, [cur.name]: cur.value };
+    }, {});
   }
 }
