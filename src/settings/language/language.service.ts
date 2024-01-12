@@ -76,9 +76,7 @@ export class LanguageService {
     });
     return {
       status: 'Success',
-      lang: newLanguage.lang,
-      locale: newLanguage.locale,
-      isDefault: newLanguage.is_default,
+      ...newLanguage
     };
   }
 
@@ -100,7 +98,7 @@ export class LanguageService {
         is_default: false
       }
     });
-    await this.prisma.language.update({
+    return await this.prisma.language.update({
       where: {
         lang: lang
       },
@@ -108,11 +106,6 @@ export class LanguageService {
         is_default: true
       }
     });
-    return {
-      status: 'Success',
-      lang: lang,
-      isDefault: true,
-    };
   }
 
   // 删除语言

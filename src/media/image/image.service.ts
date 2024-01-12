@@ -68,10 +68,9 @@ export class ImageService {
     this.location = null;
 
     if (this.EXIF?.latitude && this.EXIF?.longitude) {
-      const AMAP_KEY = await this.getMapAPI();
       // 获取地理位置信息
       this.location = await getLocation(
-          AMAP_KEY,
+          process.env.AMAP_KEY,
           this.EXIF.longitude,
           this.EXIF.latitude,
       );
@@ -223,10 +222,5 @@ export class ImageService {
       }, {});
       return urls;
     }
-  }
-
-  // 获取地图API
-  private async getMapAPI() {
-    return await this.configService.getMapApi();
   }
 }
