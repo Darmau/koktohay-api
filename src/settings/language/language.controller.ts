@@ -23,13 +23,13 @@ export class LanguageController {
   }
 
   // 增加语言 /language/add POST
-  // @Post('add')
-  // async addLanguage(@Body() addLangDto: AddLangDto) {
-  //   return await this.languageService.addLanguage(
-  //     addLangDto.lang,
-  //     addLangDto.locale,
-  //   );
-  // }
+  @Post('add')
+  async addLanguage(@Body() addLangDto: AddLangDto) {
+    return await this.languageService.addLanguage(
+      addLangDto.lang,
+      addLangDto.locale,
+    );
+  }
 
   // 切换默认语言 /language/default?lang= PATCH
   // @Patch('default')

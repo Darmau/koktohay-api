@@ -1,6 +1,5 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
 import {PrismaService} from "@/prisma/prisma.service";
-import {Language} from "@/schemas/language.schema";
 
 @Injectable()
 export class LanguageService {
@@ -39,18 +38,43 @@ export class LanguageService {
   }
 
   // 增加语言
-  // async addLanguage(lang: string, locale: string): Promise<Language> {
-  //   // 检测是否存在其他语言，如果没有，则设为默认语言
-  //   const languages = await this.languageModel.find().exec();
-  //   const isDefault = languages.length === 0;
-  //   const language = new this.languageModel({
-  //     lang,
-  //     locale,
-  //     isDefault,
-  //   });
-  //   await language.save();
-  //   return language;
-  // }
+  async addLanguage(lang: string, locale: string) {
+    // 检测是否存在相同语言
+    const languageExist = await this.prisma.language.findFirst({
+      where: {
+        lang: {
+          equals: lang
+        }
+      }
+    })
+    if (languageExist) {
+      throw new HttpException(
+        'Language already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    // 检测是否存在其他语言，如果没有，则设为默认语言
+    const languages = this.prisma.language.findFirst({
+      where: {
+        is_default: {
+          equals: true
+        }
+      }
+    })
+    const isDefault = !languages;
+    const newLanguage = await this.prisma.language.create({
+      data: {
+        lang,
+        locale,
+        is_default: isDefault
+      }
+    });
+    return {
+      status: 'success',
+      lang: newLanguage.lang,
+      locale: newLanguage.locale,
+    };
+  }
 
   // 修改默认语言
   // async updateDefaultLanguage(lang: string): Promise<Language> {
