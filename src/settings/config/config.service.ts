@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Settings } from '@/schemas/settings.schema';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {InjectModel} from '@nestjs/mongoose';
+import {Model} from 'mongoose';
+import {Settings} from '@/schemas/settings.schema';
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
@@ -14,10 +14,10 @@ export class ConfigService {
   private readonly logger = new Logger(ConfigService.name);
 
   // 获取指定配置
-  async getKeyValue(key: string) {
+  async getKeyValue(name: string) {
     return this.prisma.config.findUnique({
       where: {
-        name: key
+        name: name
       },
       select: {
         name: true,

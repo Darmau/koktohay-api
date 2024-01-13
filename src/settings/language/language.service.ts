@@ -1,9 +1,8 @@
-import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
 export class LanguageService {
-  private readonly logger = new Logger(LanguageService.name);
 
   constructor(private prisma: PrismaService) {}
 
@@ -98,7 +97,7 @@ export class LanguageService {
         is_default: false
       }
     });
-    return await this.prisma.language.update({
+    return this.prisma.language.update({
       where: {
         lang: lang
       },
