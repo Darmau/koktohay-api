@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get, Inject, Logger,
+  Get, Inject,
   Patch,
   Post,
   Query
@@ -14,7 +14,6 @@ import {Cache} from "cache-manager";
 
 @Controller('config')
 export class ConfigController {
-  private readonly logger = new Logger(ConfigService.name);
 
   constructor(
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -29,12 +28,10 @@ export class ConfigController {
         sendConfigDto.name,
         sendConfigDto.value,
     );
-    if (newConfig) {
-      await this.cacheManager.set(
+    newConfig && await this.cacheManager.set(
           sendConfigDto.name,
           {name: sendConfigDto.name, value: sendConfigDto.value},
           0);
-    }
     return newConfig;
   }
 
@@ -54,9 +51,7 @@ export class ConfigController {
       return configFromCache;
     }
     const config = await this.configService.getKeyValue(name);
-    if (config) {
-      await this.cacheManager.set(name, config, 0);
-    }
+    config && await this.cacheManager.set(name, config, 0);
     return config;
   }
 
@@ -67,12 +62,10 @@ export class ConfigController {
         sendConfigDto.name,
         sendConfigDto.value,
     );
-    if (updateConfig) {
-      await this.cacheManager.set(
+    updateConfig && await this.cacheManager.set(
           sendConfigDto.name,
           {name: sendConfigDto.name, value: sendConfigDto.value},
           0);
-    }
     return updateConfig;
   }
 
@@ -80,12 +73,7 @@ export class ConfigController {
   @Get('storage')
   async getS3Config() {
     const S3Config = await this.configService.getS3Config();
-    if (S3Config) {
-      await this.cacheManager.set(
-          'S3Config',
-          S3Config,
-          0);
-    }
+    S3Config && await this.cacheManager.set('S3Config', S3Config, 0);
     return S3Config;
   }
 }
