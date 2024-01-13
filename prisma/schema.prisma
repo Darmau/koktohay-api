@@ -302,10 +302,10 @@ model article {
   created_at                          DateTime  @default(now()) @db.Timestamptz(6)
   category                            BigInt?
   topic                               BigInt?
-  category_article_categoryTocategory category? @relation("article_categoryTocategory", fields: [category], references: [id], onDelete: SetNull)
-  image                               image?    @relation(fields: [cover], references: [id], onDelete: SetNull)
-  language                            language? @relation(fields: [lang], references: [id], onDelete: SetNull)
-  topic_article_topicTotopic          topic?    @relation("article_topicTotopic", fields: [topic], references: [id], onDelete: SetNull)
+  category_article_categoryTocategory category? @relation("article_categoryTocategory", fields: [category], references: [id])
+  image                               image?    @relation(fields: [cover], references: [id])
+  language                            language? @relation(fields: [lang], references: [id])
+  topic_article_topicTotopic          topic?    @relation("article_topicTotopic", fields: [topic], references: [id])
   comment                             comment[]
 
   @@unique([lang, slug])
@@ -325,8 +325,8 @@ model category {
   created_at                         DateTime    @default(now()) @db.Timestamptz(6)
   type                               ContentType @default(article)
   article_article_categoryTocategory article[]   @relation("article_categoryTocategory")
-  image                              image?      @relation(fields: [cover], references: [id], onDelete: SetNull)
-  language                           language?   @relation(fields: [lang], references: [id], onDelete: SetNull)
+  image                              image?      @relation(fields: [cover], references: [id])
+  language                           language?   @relation(fields: [lang], references: [id])
   photo_photo_categoryTocategory     photo[]     @relation("photo_categoryTocategory")
   video_video_categoryTocategory     video[]     @relation("video_categoryTocategory")
 
@@ -366,11 +366,12 @@ model comment {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model config {
-  id         BigInt   @id @default(autoincrement())
+  id         BigInt   @default(autoincrement())
   name       String   @unique
   value      String
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
+  @@id([id, name])
   @@index([name])
   @@schema("public")
 }
@@ -393,13 +394,13 @@ model image {
   size       BigInt?
   has_alpha  Boolean?   @default(false)
   created_at DateTime   @default(now()) @db.Timestamptz(6)
+  photo_id   BigInt?
+  thought_id BigInt?
   article    article[]
   category   category[]
-  video      video[]
-  thought    thought?   @relation(fields: [thought_id], references: [id])
-  thought_id BigInt?
   photo      photo?     @relation(fields: [photo_id], references: [id])
-  photo_id   BigInt?
+  thought    thought?   @relation(fields: [thought_id], references: [id])
+  video      video[]
 
   @@index([raw])
   @@schema("public")
@@ -414,10 +415,10 @@ model language {
   created_at DateTime   @default(now()) @db.Timestamptz(6)
   is_default Boolean    @default(false)
   article    article[]
-  photo      photo[]
-  video      video[]
   category   category[]
+  photo      photo[]
   topic      topic[]
+  video      video[]
 
   @@index([lang])
   @@schema("public")
@@ -454,11 +455,11 @@ model photo {
   cover_index                       Int       @default(0) @db.SmallInt
   category                          BigInt?
   topic                             BigInt?
-  images                            image[]
   comment                           comment[]
-  category_photo_categoryTocategory category? @relation("photo_categoryTocategory", fields: [category], references: [id], onDelete: SetNull)
-  language                          language? @relation(fields: [lang], references: [id], onDelete: SetNull)
-  topic_photo_topicTotopic          topic?    @relation("photo_topicTotopic", fields: [topic], references: [id], onDelete: SetNull)
+  images                            image[]
+  category_photo_categoryTocategory category? @relation("photo_categoryTocategory", fields: [category], references: [id])
+  language                          language? @relation(fields: [lang], references: [id])
+  topic_photo_topicTotopic          topic?    @relation("photo_topicTotopic", fields: [topic], references: [id])
 
   @@unique([lang, slug])
   @@index([slug, title])
@@ -495,7 +496,7 @@ model thought {
   topic                      BigInt?
   comment                    comment[]
   images                     image[]
-  topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id], onDelete: SetNull)
+  topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id])
 
   @@index([slug])
   @@schema("public")
@@ -512,7 +513,7 @@ model topic {
   article_article_topicTotopic article[] @relation("article_topicTotopic")
   photo_photo_topicTotopic     photo[]   @relation("photo_topicTotopic")
   thought_thought_topicTotopic thought[] @relation("thought_topicTotopic")
-  language                     language? @relation(fields: [lang], references: [id], onDelete: SetNull)
+  language                     language? @relation(fields: [lang], references: [id])
   video_video_topicTotopic     video[]   @relation("video_topicTotopic")
 
   @@unique([lang, slug])
@@ -561,10 +562,10 @@ model video {
   category                          BigInt?
   topic                             BigInt?
   comment                           comment[]
-  category_video_categoryTocategory category? @relation("video_categoryTocategory", fields: [category], references: [id], onDelete: SetNull)
-  image                             image?    @relation(fields: [cover], references: [id], onDelete: SetNull)
-  language                          language? @relation(fields: [lang], references: [id], onDelete: SetNull)
-  topic_video_topicTotopic          topic?    @relation("video_topicTotopic", fields: [topic], references: [id], onDelete: SetNull)
+  category_video_categoryTocategory category? @relation("video_categoryTocategory", fields: [category], references: [id])
+  image                             image?    @relation(fields: [cover], references: [id])
+  language                          language? @relation(fields: [lang], references: [id])
+  topic_video_topicTotopic          topic?    @relation("video_topicTotopic", fields: [topic], references: [id])
 
   @@unique([lang, slug])
   @@index([slug, title])
