@@ -290,6 +290,7 @@ model article {
   lang                                BigInt?
   slug                                String?
   title                               String?
+  subtitle                            String?
   cover                               BigInt?
   abstract                            String?
   content                             Json?     @db.Json
@@ -340,16 +341,18 @@ model category {
 model comment {
   id                                      BigInt        @id @default(autoincrement())
   user_id                                 BigInt?
-  toxic_score                             Int?          @db.SmallInt
+  is_anonymous                            Boolean?
   content                                 Json?         @db.Json
   to_thought                              BigInt?
   to_photo                                BigInt?
-  is_passed                               Boolean?      @default(true)
   is_blocked                              Boolean?      @default(false)
+  toxic_score                             Int?          @db.SmallInt
   created_at                              DateTime      @default(now()) @db.Timestamptz(6)
   to_article                              BigInt?
   to_video                                BigInt?
   reply_to                                BigInt?       @default(0)
+  upvote                                  Int           @default(0)
+  downvote                                Int           @default(0)
   comment_comment_idTocomment             comment       @relation("comment_idTocomment", fields: [id], references: [id], onDelete: SetDefault)
   other_comment_comment_idTocomment       comment?      @relation("comment_idTocomment")
   comment_comment_reply_toTocomment       comment?      @relation("comment_reply_toTocomment", fields: [reply_to], references: [id])
@@ -428,10 +431,10 @@ model language {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model message {
   id             BigInt        @id @default(autoincrement())
-  message        Json          @db.Json
   name           String
   contact_type   Communication @default(email)
   contact_detail String
+  message        Json          @db.Json
   created_at     DateTime      @default(now()) @db.Timestamptz(6)
 
   @@schema("public")
@@ -471,6 +474,7 @@ model photo {
 model stats {
   id             BigInt   @id @default(autoincrement())
   date           DateTime @unique @default(now()) @db.Date
+  character      Int?     @default(0)
   post_article   Int?     @default(0)
   post_photo     Int?     @default(0)
   upload_picture Int?     @default(0)
@@ -531,6 +535,7 @@ model public_users {
   last_seen  DateTime?   @db.Timestamptz(6)
   current_ip String?
   created_at DateTime    @default(now()) @db.Timestamptz(6)
+  role       Role        @default(reader)
   comment    comment[]
   users      auth_users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
@@ -569,6 +574,23 @@ model video {
 
   @@unique([lang, slug])
   @@index([slug, title])
+  @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model link {
+  id          BigInt    @id @default(autoincrement())
+  url         String?
+  title       String?
+  description String?
+  og_image    String?
+  content     String?
+  screenshot  String?
+  click_count Int?      @default(0)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
   @@schema("public")
 }
 
@@ -618,6 +640,15 @@ enum ContentType {
   article
   photo
   video
+
+  @@schema("public")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum Role {
+  admin
+  reader
+  exile
 
   @@schema("public")
 }
