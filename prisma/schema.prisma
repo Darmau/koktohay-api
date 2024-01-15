@@ -290,7 +290,6 @@ model article {
   lang                                BigInt?
   slug                                String?
   title                               String?
-  subtitle                            String?
   cover                               BigInt?
   abstract                            String?
   content                             Json?     @db.Json
@@ -303,6 +302,7 @@ model article {
   created_at                          DateTime  @default(now()) @db.Timestamptz(6)
   category                            BigInt?
   topic                               BigInt?
+  subtitle                            String?
   category_article_categoryTocategory category? @relation("article_categoryTocategory", fields: [category], references: [id])
   image                               image?    @relation(fields: [cover], references: [id])
   language                            language? @relation(fields: [lang], references: [id])
@@ -341,18 +341,18 @@ model category {
 model comment {
   id                                      BigInt        @id @default(autoincrement())
   user_id                                 BigInt?
-  is_anonymous                            Boolean?
+  toxic_score                             Int?          @db.SmallInt
   content                                 Json?         @db.Json
   to_thought                              BigInt?
   to_photo                                BigInt?
   is_blocked                              Boolean?      @default(false)
-  toxic_score                             Int?          @db.SmallInt
   created_at                              DateTime      @default(now()) @db.Timestamptz(6)
   to_article                              BigInt?
   to_video                                BigInt?
   reply_to                                BigInt?       @default(0)
   upvote                                  Int           @default(0)
   downvote                                Int           @default(0)
+  is_anonymous                            Boolean?
   comment_comment_idTocomment             comment       @relation("comment_idTocomment", fields: [id], references: [id], onDelete: SetDefault)
   other_comment_comment_idTocomment       comment?      @relation("comment_idTocomment")
   comment_comment_reply_toTocomment       comment?      @relation("comment_reply_toTocomment", fields: [reply_to], references: [id])
@@ -383,11 +383,11 @@ model config {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model image {
   id         BigInt     @id @default(autoincrement())
-  raw        String     @unique
+  date       String
+  time       String
+  file_name  String
+  format     ImageType
   caption    String?
-  large      String?
-  medium     String?
-  small      String?
   exif       Json?      @db.Json
   gps        Json?      @db.Json
   location   String?
@@ -405,8 +405,9 @@ model image {
   thought    thought?   @relation(fields: [thought_id], references: [id])
   video      video[]
 
-  @@index([raw])
+  @@index([file_name], map: "image_raw_idx")
   @@schema("public")
+  @@unique([date, time, file_name, format])
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -431,10 +432,10 @@ model language {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model message {
   id             BigInt        @id @default(autoincrement())
+  message        Json          @db.Json
   name           String
   contact_type   Communication @default(email)
   contact_detail String
-  message        Json          @db.Json
   created_at     DateTime      @default(now()) @db.Timestamptz(6)
 
   @@schema("public")
@@ -474,7 +475,6 @@ model photo {
 model stats {
   id             BigInt   @id @default(autoincrement())
   date           DateTime @unique @default(now()) @db.Date
-  character      Int?     @default(0)
   post_article   Int?     @default(0)
   post_photo     Int?     @default(0)
   upload_picture Int?     @default(0)
@@ -484,6 +484,7 @@ model stats {
   message        Int?     @default(0)
   page_view      Int?     @default(0)
   new_user       Int?     @default(0)
+  character      Int?     @default(0)
 
   @@index([date])
   @@schema("public")
@@ -649,6 +650,16 @@ enum Role {
   admin
   reader
   exile
+
+  @@schema("public")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum ImageType {
+  jpeg
+  png
+  avif
+  webp
 
   @@schema("public")
 }
