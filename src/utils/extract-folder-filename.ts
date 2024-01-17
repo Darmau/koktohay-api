@@ -1,12 +1,7 @@
 // 用于从图片原始链接中提取出文件夹和文件名
-export default function extractFolderName(url: string) {
-  const segments = url.split('/');
-  const folder = segments[0];
-  const fileNameArr = segments[1].split('-');
-  fileNameArr.pop();
-  const fileName = fileNameArr.join('-');
+export default function extractFolderName(image) {
   return {
-    folder,
-    fileName,
+    folder: `${image.date}/${image.time}`,
+    fileName: `${image.file_name}`,
   };
 }
