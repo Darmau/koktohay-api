@@ -9,13 +9,14 @@ import { Model } from 'mongoose';
 import sharp from 'sharp';
 import { Image } from 'src/schemas/image.schema';
 import { ConfigService } from '@/settings/config/config.service';
+import {PrismaService} from "@/prisma/prisma.service";
 
 // 本文件用于异步执行图片处理任务
 @Processor('image')
 export class ImageProcessor {
   constructor(
-    @InjectModel('Image') private ImageModel: Model<Image>,
-    private readonly configService: ConfigService,
+      private readonly configService: ConfigService,
+      private prisma: PrismaService
   ) {}
 
   private readonly logger = new Logger(ImageProcessor.name);
@@ -34,8 +35,12 @@ export class ImageProcessor {
   @Process('image-process')
   async uploadImages(job: Job<{ id: number }>) {
     // 从数据库中读取数据
-    const imageData = await this.ImageModel.findById(job.data.id);
-    const { folder, fileName } = extractFolderName(imageData.raw);
+    const imageData = await this.prisma.image.findUnique({
+      where: {
+        id: job.data.id
+      }
+    });
+    const { folder, fileName } = extractFolderName(imageData);
 
     // 如果是svg和gif格式，停止处理
     if (imageData.format === 'svg' || imageData.format === 'gif') {
@@ -47,7 +52,7 @@ export class ImageProcessor {
     // 从imageData.raw中下载图片并转换为buffer
     const getCommand = new GetObjectCommand({
       Bucket: S3Config.S3_BUCKET,
-      Key: imageData.raw,
+      Key: `${folder}/${fileName}.${imageData.format}`,
     });
 
     const S3 = new S3Client({
@@ -63,13 +68,7 @@ export class ImageProcessor {
     const imageFile = await stream.Body.transformToByteArray();
 
     const formatList =
-      this.formats[imageData.hasAlpha ? 'transparent' : 'opaque'];
-
-    const imageStack = {
-      large: {},
-      medium: {},
-      small: {},
-    };
+      this.formats[imageData.has_alpha ? 'transparent' : 'opaque'];
 
     for (const [label, target] of this.resolutions) {
       const edge = imageData.width > imageData.height ? 'width' : 'height';
@@ -83,16 +82,8 @@ export class ImageProcessor {
         const key = `${folder}/${fileName}-${label}.${format}`;
         this.logger.debug(`Uploading ${key}`);
         await uploadToR2(key, convertedImage, S3Config);
-        imageStack[label][format] = key;
       }
     }
-
-    // 更新数据库
-    await this.ImageModel.findByIdAndUpdate(job.data.id, {
-      large: imageStack.large,
-      medium: imageStack.medium,
-      small: imageStack.small,
-    });
 
     this.logger.log(`Successfully processed ${fileName}.${imageData.format}`);
     return HttpStatus.OK;

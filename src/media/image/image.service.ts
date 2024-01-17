@@ -5,19 +5,14 @@ import getLocation from '@/utils/get-location';
 import UploadRawImage from '@/utils/upload-raw-image';
 import uploadToR2 from '@/utils/upload-to-R2';
 import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
-import {InjectModel} from '@nestjs/mongoose';
 import exifr from 'exifr';
-import {Model} from 'mongoose';
 import sharp from 'sharp';
-import {Image} from '@/schemas/image.schema';
 import {ConfigService} from '@/settings/config/config.service';
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name);
-  private EXIF = null;
-  private location = null;
 
   constructor(
       private prisma: PrismaService,
@@ -50,7 +45,7 @@ export class ImageService {
           file_name: rawData.filename,
           date: rawData.date,
           time: rawData.time,
-          size: file.size,
+          size: Number(file.size),
           width: metadata.width,
           height: metadata.height,
           has_alpha: metadata.hasAlpha,
@@ -60,44 +55,43 @@ export class ImageService {
     }
 
     // 提取EXIF信息
-    this.EXIF = await exifr.parse(file.buffer);
+    const EXIF = await exifr.parse(file.buffer);
+    let location = null
 
-    // 重置location
-    this.location = null;
-
-    if (this.EXIF?.latitude && this.EXIF?.longitude) {
+    if (EXIF?.latitude && EXIF?.longitude) {
       const mapApi = await this.configService.getKeyValue('MAP_AMAP');
       // 获取地理位置信息
-      this.location = await getLocation(
+      location = await getLocation(
           mapApi.value,
-          this.EXIF.longitude,
-          this.EXIF.latitude,
+          EXIF.longitude,
+          EXIF.latitude,
       );
     }
 
     return this.prisma.image.create({
       data: {
-        format: metadata.format,
-        size: file.size,
+        file_name: rawData.filename,
+        date: rawData.date,
+        time: rawData.time,
+        size: Number(file.size),
         width: metadata.width,
         height: metadata.height,
         has_alpha: metadata.hasAlpha,
-        alt: file.originalname,
+        format: metadata.format,
+        location: location,
         exif: {
-          maker: this.EXIF?.Make,
-          model: this.EXIF?.Model,
-          exposure_time: this.EXIF?.ExposureTime,
-          aperture: this.EXIF?.FNumber,
-          iso: this.EXIF?.ISO,
-          focal_length: this.EXIF?.FocalLength,
-          lens_model: this.EXIF?.LensModel,
+          maker: EXIF?.Make,
+          model: EXIF?.Model,
+          exposure_time: EXIF?.ExposureTime,
+          aperture: EXIF?.FNumber,
+          iso: EXIF?.ISO,
+          focal_length: EXIF?.FocalLength,
+          lens_model: EXIF?.LensModel,
         },
         gps: {
-          latitude: this.EXIF?.latitude,
-          longitude: this.EXIF?.longitude,
+          latitude: EXIF?.latitude,
+          longitude: EXIF?.longitude,
         },
-        location: this.location,
-        taken_at: this.EXIF?.DateTimeOriginal,
       }
     });
   }

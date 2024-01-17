@@ -94,7 +94,7 @@ export class ImageController {
     @Query('limit') limit?: number,
     @Query('page') page?: number,
   ) {
-    return await this.imageService.getLatestThumbnails(limit, page);
+    return await this.imageService.getLatestThumbnails(Number(limit), Number(page));
   }
 
   // 删除指定图片

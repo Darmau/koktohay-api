@@ -20,7 +20,7 @@ class UploadRawImage {
   ) {
     this.image = file.buffer;
     this.date = this.generateDate();
-    this.filename = file.fieldname;
+    this.filename = file.originalname;
     this.format = file.mimetype.split('/')[1].split('+')[0];
     this.config = S3Config;
   }

@@ -50,7 +50,7 @@ import {CacheModule} from "@nestjs/cache-manager";
     }),
     AuthModule,
     UsersModule,
-    // MediaModule,
+    MediaModule,
     // MemoModule,
     // CommentModule,
     // NotificationModule,
