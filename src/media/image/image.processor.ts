@@ -32,7 +32,7 @@ export class ImageProcessor {
 
   // 本队列任务接收文件，数据库id，文件夹名，文件名
   @Process('image-process')
-  async uploadImages(job: Job<{ id: string }>) {
+  async uploadImages(job: Job<{ id: number }>) {
     // 从数据库中读取数据
     const imageData = await this.ImageModel.findById(job.data.id);
     const { folder, fileName } = extractFolderName(imageData.raw);
