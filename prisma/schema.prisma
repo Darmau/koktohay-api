@@ -302,6 +302,7 @@ model article {
   created_at                          DateTime  @default(now()) @db.Timestamptz(6)
   category                            BigInt?
   topic                               BigInt?
+  subtitle                            String?
   category_article_categoryTocategory category? @relation("article_categoryTocategory", fields: [category], references: [id])
   image                               image?    @relation(fields: [cover], references: [id])
   language                            language? @relation(fields: [lang], references: [id])
@@ -344,12 +345,14 @@ model comment {
   content                                 Json?         @db.Json
   to_thought                              BigInt?
   to_photo                                BigInt?
-  is_passed                               Boolean?      @default(true)
   is_blocked                              Boolean?      @default(false)
   created_at                              DateTime      @default(now()) @db.Timestamptz(6)
   to_article                              BigInt?
   to_video                                BigInt?
   reply_to                                BigInt?       @default(0)
+  upvote                                  Int           @default(0)
+  downvote                                Int           @default(0)
+  is_anonymous                            Boolean?
   comment_comment_idTocomment             comment       @relation("comment_idTocomment", fields: [id], references: [id], onDelete: SetDefault)
   other_comment_comment_idTocomment       comment?      @relation("comment_idTocomment")
   comment_comment_reply_toTocomment       comment?      @relation("comment_reply_toTocomment", fields: [reply_to], references: [id])
@@ -380,11 +383,11 @@ model config {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model image {
   id         BigInt     @id @default(autoincrement())
-  raw        String     @unique
+  file_name  String
   caption    String?
-  large      String?
-  medium     String?
-  small      String?
+  date       String
+  time       String
+  format     String
   exif       Json?      @db.Json
   gps        Json?      @db.Json
   location   String?
@@ -396,13 +399,15 @@ model image {
   created_at DateTime   @default(now()) @db.Timestamptz(6)
   photo_id   BigInt?
   thought_id BigInt?
+  alt        String?
   article    article[]
   category   category[]
   photo      photo?     @relation(fields: [photo_id], references: [id])
   thought    thought?   @relation(fields: [thought_id], references: [id])
   video      video[]
 
-  @@index([raw])
+  @@unique([date, time, file_name, format])
+  @@index([file_name], map: "image_raw_idx")
   @@schema("public")
 }
 
@@ -480,6 +485,7 @@ model stats {
   message        Int?     @default(0)
   page_view      Int?     @default(0)
   new_user       Int?     @default(0)
+  character      Int?     @default(0)
 
   @@index([date])
   @@schema("public")
@@ -494,6 +500,7 @@ model thought {
   location                   String?
   created_at                 DateTime  @default(now()) @db.Timestamptz(6)
   topic                      BigInt?
+  upvote                     Int       @default(0)
   comment                    comment[]
   images                     image[]
   topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id])
@@ -531,6 +538,7 @@ model public_users {
   last_seen  DateTime?   @db.Timestamptz(6)
   current_ip String?
   created_at DateTime    @default(now()) @db.Timestamptz(6)
+  role       Role        @default(reader)
   comment    comment[]
   users      auth_users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
@@ -569,6 +577,37 @@ model video {
 
   @@unique([lang, slug])
   @@index([slug, title])
+  @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model link {
+  id          BigInt    @id @default(autoincrement())
+  url         String?
+  title       String?
+  description String?
+  og_image    String?
+  content     String?
+  screenshot  String?
+  click_count Int?      @default(0)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model friend {
+  id         BigInt   @id @default(autoincrement())
+  title      String
+  link       String   @unique
+  rss        String?  @unique
+  bio        String?
+  avatar     String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
   @@schema("public")
 }
 
@@ -618,6 +657,15 @@ enum ContentType {
   article
   photo
   video
+
+  @@schema("public")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum Role {
+  admin
+  reader
+  exile
 
   @@schema("public")
 }

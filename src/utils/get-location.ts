@@ -4,7 +4,7 @@ export default async function getLocation(
   key: string,
   longitude: number,
   latitude: number,
-) {
+): Promise<string> {
   const response = await fetch(
     `https://restapi.amap.com/v3/geocode/regeo?key=${
       key

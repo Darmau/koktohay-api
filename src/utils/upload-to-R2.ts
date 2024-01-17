@@ -1,15 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 
-interface Config {
-  S3_REGION: string;
-  S3_ENDPOINT: string;
-  S3_ACCESS_ID: string;
-  S3_SECRET_KEY: string;
-  S3_BUCKET: string;
-}
-
-export default async function uploadToR2(key: string, file: Buffer, config: Config) {
+export default async function uploadToR2(key: string, file: Buffer, config: Record<string, string>) {
   const logger = new Logger(uploadToR2.name);
 
   const s3 = new S3Client({
