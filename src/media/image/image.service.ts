@@ -79,6 +79,7 @@ export class ImageService {
         has_alpha: metadata.hasAlpha,
         format: metadata.format,
         location: location,
+        taken_at: EXIF?.DateTimeOriginal,
         exif: {
           maker: EXIF?.Make,
           model: EXIF?.Model,
