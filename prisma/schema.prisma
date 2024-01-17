@@ -383,11 +383,11 @@ model config {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model image {
   id         BigInt     @id @default(autoincrement())
+  file_name  String
+  caption    String?
   date       String
   time       String
-  file_name  String
   format     ImageType
-  caption    String?
   exif       Json?      @db.Json
   gps        Json?      @db.Json
   location   String?
@@ -405,9 +405,9 @@ model image {
   thought    thought?   @relation(fields: [thought_id], references: [id])
   video      video[]
 
+  @@unique([date, time, file_name, format])
   @@index([file_name], map: "image_raw_idx")
   @@schema("public")
-  @@unique([date, time, file_name, format])
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -499,6 +499,7 @@ model thought {
   location                   String?
   created_at                 DateTime  @default(now()) @db.Timestamptz(6)
   topic                      BigInt?
+  upvote                     Int       @default(0)
   comment                    comment[]
   images                     image[]
   topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id])
@@ -591,6 +592,20 @@ model link {
   click_count Int?      @default(0)
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
   updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model friend {
+  id         BigInt   @id @default(autoincrement())
+  title      String
+  link       String   @unique
+  rss        String?  @unique
+  bio        String?
+  avatar     String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
 
   @@schema("public")
 }
