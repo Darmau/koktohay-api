@@ -1,4 +1,3 @@
-import { Image } from '@/schemas/image.schema';
 import { InjectQueue } from '@nestjs/bull';
 import {
   Body,
@@ -48,7 +47,7 @@ export class ImageController {
     await this.imageQueue.add(
       'image-process',
       {
-        id: rawImageData._id,
+        id: rawImageData.id,
       },
       {
         attempts: 3,
@@ -84,7 +83,7 @@ export class ImageController {
   // 获取指定图片
   // /image/get/:id GET
   @Get('get/:id')
-  async getImage(@Param('id') id: string) {
+  async getImage(@Param('id') id: number) {
     return await this.imageService.getImage(id);
   }
 
@@ -95,13 +94,13 @@ export class ImageController {
     @Query('limit') limit?: number,
     @Query('page') page?: number,
   ) {
-    return await this.imageService.getLatestThumbnails(limit, page);
+    return await this.imageService.getLatestThumbnails(Number(limit), Number(page));
   }
 
   // 删除指定图片
   // /image/delete/:id DELETE
   @Delete('delete/:id')
-  async deleteImage(@Param('id') id: string) {
+  async deleteImage(@Param('id') id: number) {
     return await this.imageService.deleteImage(id);
   }
 
@@ -110,7 +109,7 @@ export class ImageController {
   @Patch('replace/:id')
   @UseInterceptors(FileInterceptor('image'))
   async replaceImage(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @UploadedFile(
       new ParseFilePipe({
         validators: [new MaxFileSizeValidator({ maxSize: 20971520 })],
@@ -138,7 +137,7 @@ export class ImageController {
   // 修改图片信息
   // /image/update/:id PATCH
   @Patch('update/:id')
-  async updateImage(@Param('id') id: string, @Body() body: Partial<Image>) {
+  async updateImage(@Param('id') id: number, @Body() body: Record<string, string>) {
     return await this.imageService.updateImage(id, body);
   }
 }

@@ -1,22 +1,34 @@
-import { Image } from '@/schemas/image.schema';
-
 // 本文件用于从图片数据中提取出所有规格的URL
-export default function extractKey(image: Image) {
-  const urlList = [{ Key: image.raw }];
+export default function extractKey(image) {
+  const urlList = [{
+    Key: `${image.date}/${image.time}/${image.file_name}.${image.format}`
+  }];
   if (image.large) {
-    for (const largeImg in image.large) {
-      urlList.push({ Key: image.large[largeImg] });
-    }
+    urlList.push({
+      Key: `${image.date}/${image.time}/${image.file_name}-large.${image.format}`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-large.avif`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-large.webp`
+    })
   }
   if (image.medium) {
-    for (const mediumImg in image.medium) {
-      urlList.push({ Key: image.medium[mediumImg] });
-    }
+    urlList.push({
+      Key: `${image.date}/${image.time}/${image.file_name}-medium.${image.format}`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-medium.avif`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-medium.webp`
+    })
   }
   if (image.small) {
-    for (const smallImg in image.small) {
-      urlList.push({ Key: image.small[smallImg] });
-    }
+    urlList.push({
+      Key: `${image.date}/${image.time}/${image.file_name}-small.${image.format}`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-small.avif`
+    }, {
+      Key: `${image.date}/${image.time}/${image.file_name}-small.webp`
+    })
   }
   return urlList;
 }
