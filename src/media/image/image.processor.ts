@@ -1,14 +1,11 @@
 import extractFolderName from '@/utils/extract-folder-filename';
 import uploadToR2 from '@/utils/upload-to-R2';
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { Process, Processor } from '@nestjs/bull';
-import { HttpStatus, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Job } from 'bull';
-import { Model } from 'mongoose';
+import {GetObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {Process, Processor} from '@nestjs/bull';
+import {HttpStatus, Logger} from '@nestjs/common';
+import {Job} from 'bull';
 import sharp from 'sharp';
-import { Image } from 'src/schemas/image.schema';
-import { ConfigService } from '@/settings/config/config.service';
+import {ConfigService} from '@/settings/config/config.service';
 import {PrismaService} from "@/prisma/prisma.service";
 
 // 本文件用于异步执行图片处理任务
