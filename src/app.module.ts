@@ -3,17 +3,10 @@ import {ConfigModule} from '@nestjs/config';
 import {MongooseModule} from '@nestjs/mongoose';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
-import {AuthModule} from './auth/auth.module';
-import {CommentModule} from './comment/comment.module';
-import {ContentModule} from './content/content.module';
 import {MediaModule} from './media/media.module';
-import {NotificationModule} from './notification/notification.module';
-import {UsersModule} from './users/users.module';
 import {BullModule} from '@nestjs/bull';
-import {MemoModule} from './content/memo/memo.module';
 import {LanguageModule} from '@/settings/language/language.module';
 import {ThrottlerModule} from '@nestjs/throttler';
-import {CategoryModule} from './category/category.module';
 import {SettingsModule} from '@/settings/settings.module';
 import {PrismaModule} from './prisma/prisma.module';
 import * as process from "process";
@@ -48,15 +41,8 @@ import {CacheModule} from "@nestjs/cache-manager";
     CacheModule.register({
       isGlobal: true,
     }),
-    AuthModule,
-    UsersModule,
     MediaModule,
-    // MemoModule,
-    // CommentModule,
-    // NotificationModule,
-    // ContentModule,
     LanguageModule,
-    CategoryModule,
     SettingsModule,
   ],
   controllers: [AppController],
