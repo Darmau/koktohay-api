@@ -1,6 +1,5 @@
 import {Module} from '@nestjs/common';
 import {ConfigModule} from '@nestjs/config';
-import {MongooseModule} from '@nestjs/mongoose';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {MediaModule} from './media/media.module';
@@ -21,7 +20,6 @@ import {CacheModule} from "@nestjs/cache-manager";
       envFilePath: '.env.development',
     }),
     PrismaModule,
-    MongooseModule.forRoot(process.env.MONGO_URI),
     // connect to redis for queue task
     BullModule.forRoot({
       redis: {
