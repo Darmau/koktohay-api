@@ -11,6 +11,7 @@ import {PrismaModule} from './prisma/prisma.module';
 import * as process from "process";
 import '@/extensions/bigint.extension';
 import {CacheModule} from "@nestjs/cache-manager";
+import { ThoughtModule } from './content/thought/thought.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import {CacheModule} from "@nestjs/cache-manager";
     MediaModule,
     LanguageModule,
     SettingsModule,
+    ThoughtModule,
   ],
   controllers: [AppController],
   providers: [AppService],
