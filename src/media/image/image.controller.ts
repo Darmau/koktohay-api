@@ -33,7 +33,7 @@ export class ImageController {
   async uploadImage(
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 20971520 })],
+        validators: [new MaxFileSizeValidator({ maxSize: 30000000 })],
       }),
     )
     image: Express.Multer.File,

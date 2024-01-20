@@ -4,9 +4,7 @@ import {ConfigService} from './config.service';
 import {PrismaModule} from "@/prisma/prisma.module";
 
 @Module({
-  imports: [
-    PrismaModule
-  ],
+  imports: [PrismaModule],
   controllers: [ConfigController],
   providers: [ConfigService],
   exports: [ConfigService],
