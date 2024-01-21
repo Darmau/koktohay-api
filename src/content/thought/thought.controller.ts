@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Inject, Param, Post, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query} from '@nestjs/common';
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 import {ThoughtService} from "@/content/thought/thought.service";
@@ -39,7 +39,20 @@ export class ThoughtController {
     return this.thoughtService.getThoughts(page, limit);
   }
 
-  // 获取想法详情及附属评论 /thought/detail/:slug
+  // 获取想法详情 /thought/detail/:slug GET
+  @Get('detail/:slug')
+  async getThoughtDetail(@Param('slug') slug: string) {
+    return this.thoughtService.getThoughtDetail(slug);
+  }
 
   // 修改想法 /thought/update/:slug PATCH
+  @Patch('update/:slug')
+  async updateThought(@Param('slug') slug: string, @Body() addThoughtDto: AddThoughtDto) {
+    return await this.thoughtService.updateThought(
+        slug,
+        addThoughtDto.content,
+        addThoughtDto.location,
+        addThoughtDto.images,
+    );
+  }
 }
