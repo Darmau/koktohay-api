@@ -124,7 +124,102 @@ export class ThoughtService {
   }
 
   // 获取想法详情
-  async getThoughtDetail(id: number) {}
+  async getThoughtDetail(slug: string) {
+    return this.prisma.thought.findUnique({
+      where: {
+        slug: slug
+      },
+      select: {
+        id: true,
+        content: true,
+        location: true,
+        images: {
+          select: {
+            date: true,
+            time: true,
+            file_name: true,
+            format: true,
+          }
+        },
+        _count: {
+          select: {
+            comment: true
+          }
+        }
+      }
+    });
+  }
 
   // 修改想法
+  async updateThought(slug: string, content?: string, location?: string, images?: number[]) {
+    try {
+      const result = await this.prisma.$transaction(async (prisma) => {
+        const thought = await this.prisma.thought.update({
+          where: {
+            slug: slug
+          },
+          data: {
+            content: content,
+            location: location,
+          }
+        });
+
+        // 如果有新的图片，就更新关联
+        if (images && images.length > 0) {
+          // 先清除现有图片与thought的关联
+          await this.prisma.image.updateMany({
+            where: {
+              thought_id: result.id
+            },
+            data: {
+              thought_id: null
+            }
+          });
+          this.logger.debug('Images are not empty, start to add images');
+          await Promise.all(
+              images.map((image) => {
+                return this.prisma.image.update({
+                  where: {
+                    id: image
+                  },
+                  data: {
+                    thought_id: thought.id
+                  }
+                })
+              })
+          )
+        }
+
+        // 返回更新后的thought
+        return this.prisma.thought.findUnique({
+          where: {
+            id: thought.id
+          },
+          select: {
+            id: true,
+            content: true,
+            location: true,
+            images: {
+              select: {
+                date: true,
+                time: true,
+                file_name: true,
+                format: true,
+              }
+            },
+            _count: {
+              select: {
+                comment: true
+              }
+            }
+          }
+        });
+      });
+      this.logger.debug(`Successfully update thought: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error updating thought: ${error}`);
+      throw new HttpException('Error updating thought', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
