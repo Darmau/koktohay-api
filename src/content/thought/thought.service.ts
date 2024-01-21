@@ -97,6 +97,34 @@ export class ThoughtService {
   }
 
   // 批量获取想法
+  async getThoughts(page: number, limit: number) {
+    return this.prisma.thought.findMany({
+      skip: (page - 1) * limit,
+      take: Number(limit),
+      select: {
+        id: true,
+        content: true,
+        location: true,
+        images: {
+          select: {
+            id: true,
+            date: true,
+            time: true,
+            file_name: true,
+            format: true,
+          }
+        },
+        _count: {
+          select: {
+            comment: true
+          }
+        }
+      }
+    });
+  }
 
-  // 获取想法详情及附属评论
+  // 获取想法详情
+  async getThoughtDetail(id: number) {}
+
+  // 修改想法
 }
