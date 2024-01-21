@@ -506,6 +506,7 @@ model thought {
   topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id])
 
   @@index([slug])
+  @@unique([slug])
   @@schema("public")
 }
 
