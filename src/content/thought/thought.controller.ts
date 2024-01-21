@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Inject, Param, Post} from '@nestjs/common';
+import {Body, Controller, Delete, Inject, Param, Post, Query} from '@nestjs/common';
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 import {ThoughtService} from "@/content/thought/thought.service";
@@ -22,10 +22,15 @@ export class ThoughtController {
     );
   }
 
-  // 删除想法 /thought/delete/:id DELETE
+  // 删除想法 /thought/delete/:id?with-img=true DELETE
   @Delete('delete/:id')
-  async deleteThought(@Param('id') id: number) {
-    return await this.thoughtService.deleteThought(id);
+  async deleteThought(
+      @Param('id') id: number,
+      @Query('with-img') withImg: boolean = false
+  ) {
+    return withImg ?
+        await this.thoughtService.deleteThoughtWithImages(id) :
+        await this.thoughtService.deleteThoughtWithoutImages(id);
   }
 
   // 批量获取想法 /thought/latest?page=1&size=10 GET

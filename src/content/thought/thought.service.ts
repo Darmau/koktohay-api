@@ -46,8 +46,8 @@ export class ThoughtService {
     }
   }
 
-  // 删除想法
-  async deleteThought(id: number) {
+  // 删除想法，不删除附属图片
+  async deleteThoughtWithoutImages(id: number) {
     try {
       const result = await this.prisma.$transaction([
         this.prisma.image.updateMany({
@@ -69,12 +69,32 @@ export class ThoughtService {
       return result;
     } catch (error) {
       this.logger.error(`Error deleting thought: ${error}`);
-      // Handle the error appropriately
       throw new HttpException('Error deleting thought', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  // 修改想法
+  // 删除想法以及附属图片
+  async deleteThoughtWithImages(id: number) {
+    try {
+      const result = await this.prisma.$transaction([
+        this.prisma.image.deleteMany({
+          where: {
+            thought_id: id
+          }
+        }),
+        this.prisma.thought.delete({
+          where: {
+            id: id
+          }
+        })
+      ]);
+      this.logger.debug(`Successfully deleted thought and images: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error deleting thought: ${error}`);
+      throw new HttpException('Error deleting thought', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   // 批量获取想法
 
