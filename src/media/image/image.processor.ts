@@ -78,7 +78,7 @@ export class ImageProcessor {
       // 对于label是thumbnail的图片，只上传webp格式，跳过下方的for循环，继续执行下一个label
       if (label === 'thumbnail') {
         const convertedImage = await this.convertImage('webp', resizedImage);
-        const key = `${folder}/${fileName}-${label}.webp`;
+        const key = `image/${folder}/${fileName}-${label}.webp`;
         this.logger.debug(`Uploading thumbnail ${key}`);
         await uploadToR2(key, convertedImage, S3Config);
         continue;
@@ -86,7 +86,7 @@ export class ImageProcessor {
 
       for (const format of formatList) {
         const convertedImage = await this.convertImage(format, resizedImage);
-        const key = `${folder}/${fileName}-${label}.${format}`;
+        const key = `image/${folder}/${fileName}-${label}.${format}`;
         this.logger.debug(`Uploading ${key}`);
         await uploadToR2(key, convertedImage, S3Config);
       }
