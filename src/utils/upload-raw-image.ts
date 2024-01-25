@@ -32,7 +32,7 @@ class UploadRawImage {
     time: string,
     key: string;
   }> {
-    const key = `image/${this.date.day}/${this.date.time}/${this.filename}.${this.format}`;
+    const key = `${this.date.day}/${this.date.time}/${this.filename}.${this.format}`;
     await uploadToR2(key, this.image, this.config);
     return {
       success: true,
