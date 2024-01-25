@@ -111,6 +111,7 @@ export class ImageService {
     const folder = `${image.date}/${image.time}/${image.file_name}`;
     return {
       ...image,
+      thumbnail: `${S3_URL_PREFIX}/${folder}-thumbnail.webp`,
       raw: `${S3_URL_PREFIX}/${folder}.${image.format}`,
       large: {
         [image.format]: `${S3_URL_PREFIX}/${folder}-large.jpeg`,

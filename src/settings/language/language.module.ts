@@ -4,9 +4,7 @@ import {LanguageService} from './language.service';
 import {PrismaModule} from "@/prisma/prisma.module";
 
 @Module({
-  imports: [
-    PrismaModule
-  ],
+  imports: [PrismaModule],
   controllers: [LanguageController],
   providers: [LanguageService],
   exports: [LanguageService],
