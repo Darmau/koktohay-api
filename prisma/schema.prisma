@@ -317,19 +317,19 @@ model article {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model category {
-  id                                 BigInt      @id @default(autoincrement())
+  id                                 BigInt    @id @default(autoincrement())
   lang                               BigInt?
   slug                               String?
   title                              String?
   description                        String?
   cover                              BigInt?
-  created_at                         DateTime    @default(now()) @db.Timestamptz(6)
-  type                               ContentType @default(article)
-  article_article_categoryTocategory article[]   @relation("article_categoryTocategory")
-  image                              image?      @relation(fields: [cover], references: [id])
-  language                           language?   @relation(fields: [lang], references: [id])
-  photo_photo_categoryTocategory     photo[]     @relation("photo_categoryTocategory")
-  video_video_categoryTocategory     video[]     @relation("video_categoryTocategory")
+  created_at                         DateTime  @default(now()) @db.Timestamptz(6)
+  type                               Content   @default(article)
+  article_article_categoryTocategory article[] @relation("article_categoryTocategory")
+  image                              image?    @relation(fields: [cover], references: [id])
+  language                           language? @relation(fields: [lang], references: [id])
+  photo_photo_categoryTocategory     photo[]   @relation("photo_categoryTocategory")
+  video_video_categoryTocategory     video[]   @relation("video_categoryTocategory")
 
   @@unique([lang, slug])
   @@index([slug, title])
@@ -438,6 +438,7 @@ model message {
   contact_type   Communication @default(email)
   contact_detail String
   created_at     DateTime      @default(now()) @db.Timestamptz(6)
+  is_read        Boolean
 
   @@schema("public")
 }
@@ -495,7 +496,7 @@ model stats {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model thought {
   id                         BigInt    @id @default(autoincrement())
-  slug                       String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug                       String?   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   content                    String?   @default("")
   location                   String?
   created_at                 DateTime  @default(now()) @db.Timestamptz(6)
@@ -506,7 +507,6 @@ model thought {
   topic_thought_topicTotopic topic?    @relation("thought_topicTotopic", fields: [topic], references: [id])
 
   @@index([slug])
-  @@unique([slug])
   @@schema("public")
 }
 
@@ -628,6 +628,18 @@ model notification {
   @@schema("public")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model log {
+  id         BigInt   @id @default(autoincrement())
+  type       Log?
+  module     String?
+  content    String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
 enum aal_level {
   aal1
   aal2
@@ -670,7 +682,16 @@ enum Communication {
 }
 
 /// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-enum ContentType {
+enum Role {
+  admin
+  reader
+  exile
+
+  @@schema("public")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum Content {
   article
   photo
   video
@@ -679,10 +700,11 @@ enum ContentType {
 }
 
 /// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-enum Role {
-  admin
-  reader
-  exile
+enum Log {
+  log
+  debug
+  error
+  warning
 
   @@schema("public")
 }
