@@ -53,7 +53,7 @@ export class ImageController {
         attempts: 3,
         removeOnComplete: true,
         removeOnFail: true,
-        timeout: 60000,
+        timeout: 15000,
       },
     );
     return rawImageData;
