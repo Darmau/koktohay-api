@@ -12,6 +12,7 @@ import * as process from "process";
 import '@/extensions/bigint.extension';
 import {CacheModule} from "@nestjs/cache-manager";
 import { ThoughtModule } from './content/thought/thought.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ThoughtModule } from './content/thought/thought.module';
     LanguageModule,
     SettingsModule,
     ThoughtModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
