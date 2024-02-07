@@ -545,6 +545,7 @@ model public_users {
   users        auth_users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("users")
+  @@unique([user_id])
   @@schema("public")
 }
 
