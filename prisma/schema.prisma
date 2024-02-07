@@ -542,7 +542,7 @@ model public_users {
   role         Role           @default(reader)
   comment      comment[]
   notification notification[]
-  users        auth_users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  users        auth_users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("users")
   @@schema("public")
@@ -685,7 +685,7 @@ enum Communication {
 enum Role {
   admin
   reader
-  exile
+  visitor
 
   @@schema("public")
 }
