@@ -30,7 +30,7 @@ export class AuthController {
     );
   }
 
-  // 第三方登录 /auth/oauth POST 'GitHub'
+  // 第三方登录 /auth/oauth/github POST
   @Post('oauth/:provider')
   async oauthLogin(@Param('provider') provider: Provider){
     return await this.authService.oauthLogin(
