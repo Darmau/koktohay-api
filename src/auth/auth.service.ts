@@ -1,11 +1,10 @@
-import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
-import {AuthResponse, AuthTokenResponsePassword, createClient, Provider} from "@supabase/supabase-js";
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {createClient, Provider, SupabaseClient} from "@supabase/supabase-js";
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
 export class AuthService {
-  private supabase;
-  private readonly logger = new Logger(AuthService.name);
+  private supabase: SupabaseClient;
 
   constructor(
       private prisma: PrismaService,
@@ -33,7 +32,7 @@ export class AuthService {
   }
 
   // 邮箱登录
-  async login(email: string, password: string): Promise<AuthTokenResponsePassword> {
+  async login(email: string, password: string) {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,
