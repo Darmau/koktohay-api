@@ -8,7 +8,7 @@ import {
   Query
 } from '@nestjs/common';
 import {ConfigService} from './config.service';
-import {SendConfigDto} from "@/dto/sendConfig.dto";
+import {SendConfigDto} from "@/settings/language/sendConfig.dto";
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 

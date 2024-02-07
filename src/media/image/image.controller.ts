@@ -10,12 +10,14 @@ import {
   Patch,
   Post,
   Query,
-  UploadedFile,
+  UploadedFile, UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Queue } from 'bull';
 import { ImageService } from './image.service';
+import {AuthGuard} from "@/auth/auth.guard";
+import {AdminGuard} from "@/auth/admin.guard";
 
 @Controller('image')
 export class ImageController {
@@ -29,6 +31,7 @@ export class ImageController {
   // 上传图片
   // /image/upload POST
   @Post('upload')
+  @UseGuards(AuthGuard, AdminGuard)
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(
     @UploadedFile(
@@ -100,6 +103,7 @@ export class ImageController {
   // 删除指定图片
   // /image/delete/:id DELETE
   @Delete('delete/:id')
+  @UseGuards(AuthGuard, AdminGuard)
   async deleteImage(@Param('id') id: number) {
     return await this.imageService.deleteImage(id);
   }
@@ -107,6 +111,7 @@ export class ImageController {
   // 替换图片
   // /image/replace/:id PATCH
   @Patch('replace/:id')
+  @UseGuards(AuthGuard, AdminGuard)
   @UseInterceptors(FileInterceptor('image'))
   async replaceImage(
     @Param('id') id: number,
@@ -137,6 +142,7 @@ export class ImageController {
   // 修改图片信息
   // /image/update/:id PATCH
   @Patch('update/:id')
+  @UseGuards(AuthGuard, AdminGuard)
   async updateImage(@Param('id') id: number, @Body() body: Record<string, string>) {
     return await this.imageService.updateImage(id, body);
   }

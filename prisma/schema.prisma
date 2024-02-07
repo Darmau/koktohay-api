@@ -433,12 +433,12 @@ model language {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model message {
   id             BigInt        @id @default(autoincrement())
-  message        Json          @db.Json
+  message        String
   name           String
   contact_type   Communication @default(email)
   contact_detail String
   created_at     DateTime      @default(now()) @db.Timestamptz(6)
-  is_read        Boolean
+  is_read        Boolean       @default(false)
 
   @@schema("public")
 }
@@ -533,7 +533,7 @@ model topic {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model public_users {
   id           BigInt         @id @default(autoincrement())
-  user_id      String         @db.Uuid
+  user_id      String         @unique @db.Uuid
   name         String?
   source       String?
   last_seen    DateTime?      @db.Timestamptz(6)
@@ -542,8 +542,9 @@ model public_users {
   role         Role           @default(reader)
   comment      comment[]
   notification notification[]
-  users        auth_users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  users        auth_users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
+  @@index([user_id])
   @@map("users")
   @@schema("public")
 }
@@ -685,7 +686,7 @@ enum Communication {
 enum Role {
   admin
   reader
-  exile
+  banned
 
   @@schema("public")
 }
