@@ -28,6 +28,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('User not found');
     }
 
+    // 将user.id信息存入request
+    request.user = user.id;
+
     return true;
   }
 
