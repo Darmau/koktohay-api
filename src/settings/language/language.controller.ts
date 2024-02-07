@@ -8,7 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import {LanguageService} from './language.service';
-import {AddLangDto} from '@/dto/addLang.dto';
+import {AddLangDto} from '@/settings/language/addLang.dto';
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 

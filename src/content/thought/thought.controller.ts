@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query} from '
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 import {ThoughtService} from "@/content/thought/thought.service";
-import {AddThoughtDto} from "@/dto/addThought.dto";
+import {AddThoughtDto} from "@/content/thought/addThought.dto";
 
 @Controller('thought')
 export class ThoughtController {
