@@ -1,8 +1,9 @@
-import {Body, Controller, Inject, Post} from '@nestjs/common';
+import {Body, Controller, Inject, Param, Post} from '@nestjs/common';
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 import {AuthService} from "@/auth/auth.service";
 import {RegisterDto} from "@/auth/register.dto";
+import {Provider} from "@supabase/supabase-js";
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,14 @@ export class AuthController {
     return await this.authService.login(
         registerDto.email,
         registerDto.password
+    );
+  }
+
+  // 第三方登录 /auth/oauth-login POST 'GitHub'
+  @Post('oauth-login/:provider')
+  async oauthLogin(@Param('provider') provider: Provider){
+    return await this.authService.oauthLogin(
+        provider
     );
   }
 }
