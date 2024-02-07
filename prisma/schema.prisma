@@ -685,7 +685,7 @@ enum Communication {
 enum Role {
   admin
   reader
-  prisoner
+  banned
 
   @@schema("public")
 }
