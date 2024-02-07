@@ -3,7 +3,7 @@ import {CanActivate, ExecutionContext, ForbiddenException, Injectable} from "@ne
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class BlacklistGuard implements CanActivate {
   constructor(
       private prisma: PrismaService,
   ) {
