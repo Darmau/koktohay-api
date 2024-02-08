@@ -23,6 +23,12 @@ export class UsersController {
     );
   }
 
+  // 根据user_id查找，看是否为admin
+  @Get('ifadmin/:user_id')
+  async ifAdmin(@Param('user_id') user_id:string): Promise<boolean> {
+    return await this.usersService.ifAdmin(user_id);
+  }
+
   // 封禁用户
   @Post('ban/:id')
   async banUser(@Param('id') id:number) {
