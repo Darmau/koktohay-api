@@ -1,5 +1,5 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import {createClient, Provider, SupabaseClient} from "@supabase/supabase-js";
+import {createClient, SupabaseClient} from "@supabase/supabase-js";
 import {PrismaService} from "@/prisma/prisma.service";
 
 @Injectable()
@@ -36,17 +36,6 @@ export class AuthService {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,
-    });
-    if (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-    return data;
-  }
-
-  // 第三方登录
-  async oauthLogin(provider: Provider) {
-    const { data, error } = await this.supabase.auth.signInWithOAuth({
-      provider: provider
     });
     if (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
