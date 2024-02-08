@@ -14,6 +14,7 @@ import {CacheModule} from "@nestjs/cache-manager";
 import {ThoughtModule} from './content/thought/thought.module';
 import {MessageModule} from './message/message.module';
 import {AuthModule} from "@/auth/auth.module";
+import {UsersModule} from "@/users/users.module";
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import {AuthModule} from "@/auth/auth.module";
     SettingsModule,
     ThoughtModule,
     MessageModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
