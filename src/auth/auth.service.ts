@@ -15,7 +15,7 @@ export class AuthService {
     );
   }
 
-  // 邮箱注册
+  // 邮箱注册 仅用于测试
   async signup(email: string, password: string) {
     const { data: supabaseData, error } = await this.supabase.auth.signUp({ email, password });
     if (error) {
@@ -31,22 +31,11 @@ export class AuthService {
     });
   }
 
-  // 邮箱登录
+  // 邮箱登录 仅用于测试
   async login(email: string, password: string) {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,
-    });
-    if (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-    return data;
-  }
-
-  // 第三方登录
-  async oauthLogin(provider: Provider) {
-    const { data, error } = await this.supabase.auth.signInWithOAuth({
-      provider: provider
     });
     if (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
