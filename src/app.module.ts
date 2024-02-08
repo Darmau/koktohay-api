@@ -11,8 +11,8 @@ import {PrismaModule} from './prisma/prisma.module';
 import * as process from "process";
 import '@/extensions/bigint.extension';
 import {CacheModule} from "@nestjs/cache-manager";
-import { ThoughtModule } from './content/thought/thought.module';
-import { MessageModule } from './message/message.module';
+import {ThoughtModule} from './content/thought/thought.module';
+import {MessageModule} from './message/message.module';
 import {AuthModule} from "@/auth/auth.module";
 
 @Module({
@@ -26,10 +26,10 @@ import {AuthModule} from "@/auth/auth.module";
     // connect to redis for queue task
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST.toString(),
+        host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT),
-        username: process.env.REDIS_USER.toString(),
-        password: process.env.REDIS_PASSWORD.toString(),
+        username: process.env.REDIS_USER,
+        password: process.env.REDIS_PASSWORD,
       },
     }),
     // rate limit
