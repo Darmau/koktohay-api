@@ -31,6 +31,18 @@ export class AuthService {
     });
   }
 
+  // 邮箱登录
+  async login(email: string, password: string) {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+    return data;
+  }
+
   // 第三方登录
   async oauthLogin(provider: Provider) {
     const { data, error } = await this.supabase.auth.signInWithOAuth({

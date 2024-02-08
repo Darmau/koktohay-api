@@ -25,6 +25,7 @@ export class ConfigService {
 
   // 添加API配置
   async addKey(key: string, value: string) {
+    this.logger.debug(`add key: ${key}, value: ${value}`);
     return this.prisma.config.create({
       data: {
         name: key,
