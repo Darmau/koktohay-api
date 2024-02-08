@@ -12,7 +12,7 @@ export class AuthController {
       private readonly authService: AuthService
   ) {}
 
-  // 注册 /auth/signup POST
+  // 注册 /auth/signup POST 仅用于测试
   @Post('signup')
   async register(@Body() registerDto: SignupDto) {
     return await this.authService.signup(
@@ -21,11 +21,11 @@ export class AuthController {
     );
   }
 
-  // 第三方登录 /auth/oauth/github POST
-  @Post('oauth/:provider')
-  async oauthLogin(@Param('provider') provider: Provider){
-    return await this.authService.oauthLogin(
-        provider
+  @Post('login')
+  async login(@Body() registerDto: SignupDto) {
+    return await this.authService.login(
+        registerDto.email,
+        registerDto.password
     );
   }
 }
