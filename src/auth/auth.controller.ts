@@ -21,15 +21,6 @@ export class AuthController {
     );
   }
 
-  // 登录 /auth/login POST
-  @Post('login')
-  async login(@Body() registerDto: SignupDto) {
-    return await this.authService.login(
-        registerDto.email,
-        registerDto.password
-    );
-  }
-
   // 第三方登录 /auth/oauth/github POST
   @Post('oauth/:provider')
   async oauthLogin(@Param('provider') provider: Provider){
