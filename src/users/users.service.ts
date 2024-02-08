@@ -33,6 +33,16 @@ export class UsersService {
     });
   }
 
+  // 根据user_id查找，看是否为admin
+  async ifAdmin(user_id: string): Promise<boolean> {
+    const user = await this.prisma.public_users.findUnique({
+      where: {
+        user_id: user_id
+      }
+    });
+    return user?.role === 'admin';
+  }
+
   // 封禁用户
   async banUser(id: number) {
     return this.prisma.public_users.update({
