@@ -1,14 +1,10 @@
-import {Body, Controller, Inject, Param, Post} from '@nestjs/common';
-import {CACHE_MANAGER} from "@nestjs/cache-manager";
-import {Cache} from "cache-manager";
+import {Body, Controller, Post} from '@nestjs/common';
 import {AuthService} from "@/auth/auth.service";
 import {SignupDto} from "@/auth/signup.dto";
-import {Provider} from "@supabase/supabase-js";
 
 @Controller('auth')
 export class AuthController {
   constructor(
-      @Inject(CACHE_MANAGER) private cacheManager: Cache,
       private readonly authService: AuthService
   ) {}
 
