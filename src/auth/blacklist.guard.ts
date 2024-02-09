@@ -14,7 +14,7 @@ export class BlacklistGuard implements CanActivate {
     if (!request.user) {
       throw new ForbiddenException('No user id provided');
     }
-    // 提取request.user, 去数据库查询该user，检查role是否为admin
+    // 提取request.user, 去数据库查询该user，检查role是否为banned
     const userData = await this.prisma.public_users.findUnique({
       where: {
         user_id: request.user
@@ -23,7 +23,7 @@ export class BlacklistGuard implements CanActivate {
         role: true
       }
     });
-    // 若不是reader或admin，则抛出ForbiddenException
+    // 若为黑名单用户则抛出ForbiddenException
     if (userData.role === 'banned') {
       throw new ForbiddenException('User is banned');
     }
