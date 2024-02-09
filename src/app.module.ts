@@ -23,7 +23,6 @@ import {UsersModule} from "@/users/users.module";
       cache: true,
       envFilePath: '.env.development',
     }),
-    PrismaModule,
     // connect to redis for queue task
     BullModule.forRoot({
       redis: {
@@ -43,6 +42,7 @@ import {UsersModule} from "@/users/users.module";
     CacheModule.register({
       isGlobal: true,
     }),
+    PrismaModule,
     AuthModule,
     MediaModule,
     LanguageModule,
