@@ -15,6 +15,8 @@ import {ThoughtModule} from './content/thought/thought.module';
 import {MessageModule} from './message/message.module';
 import {AuthModule} from "@/auth/auth.module";
 import {UsersModule} from "@/users/users.module";
+import { SupabaseService } from './supabase/supabase.service';
+import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
   imports: [
@@ -49,10 +51,11 @@ import {UsersModule} from "@/users/users.module";
     SettingsModule,
     ThoughtModule,
     MessageModule,
-    UsersModule
+    UsersModule,
+    SupabaseModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SupabaseService],
 })
 export class AppModule {
 }
