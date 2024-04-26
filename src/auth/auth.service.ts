@@ -10,20 +10,26 @@ export class AuthService {
   ) {}
 
   // 邮箱注册
-  async signup(email: string, password: string) {
+  async signup(email: string, password: string, name: string) {
+    // 检查public_users中有多少个用户
+    const existUser = await this.prisma.public_users.findMany();
+
     const {data: supabaseData, error} = await this.supabaseService.supabase.auth.signUp({
       email,
       password
     })
+
     if (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    // 将supabase注册成功返回的信息存入users表
+
+    // 将supabase注册成功返回的信息存入users表 如果是第一个用户则为admin
     return this.prisma.public_users.create({
       data: {
         user_id: supabaseData.user.id,
         source: supabaseData.user.app_metadata.provider,
-        role: 'reader',
+        name,
+        role: existUser.length === 0 ? 'admin' : 'reader',
       }
     });
   }
