@@ -8,12 +8,13 @@ export class AuthController {
       private readonly authService: AuthService
   ) {}
 
-  // 注册 /auth/signup POST 测试用
+  // 注册 /auth/signup POST
   @Post('signup')
   async register(@Body() registerDto: SignupDto) {
     return await this.authService.signup(
         registerDto.email,
-        registerDto.password
+        registerDto.password,
+        registerDto.name
     );
   }
 
