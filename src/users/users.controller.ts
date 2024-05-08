@@ -9,7 +9,7 @@ export class UsersController {
 
   // 检测是否存在管理员账户
   @Get('admin')
-  async checkAdmin(): Promise<Boolean> {
+  async checkAdmin(): Promise<boolean> {
     return await this.usersService.checkAdmin();
   }
 

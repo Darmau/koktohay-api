@@ -10,7 +10,7 @@ export class UsersService {
   }
 
   // 检测是否存在管理员账户
-  async checkAdmin(): Promise<Boolean> {
+  async checkAdmin(): Promise<boolean> {
     const admin = await this.prisma.public_users.findFirst({
       where: {
         role: 'admin'

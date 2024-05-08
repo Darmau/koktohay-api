@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
 import {PrismaService} from "@/prisma/prisma.service";
 import {SupabaseService} from "@/supabase/supabase.service";
 
@@ -8,6 +8,8 @@ export class AuthService {
       private prisma: PrismaService,
       private readonly supabaseService: SupabaseService,
   ) {}
+
+  private readonly logger = new Logger(AuthService.name);
 
   // 邮箱注册
   async signup(email: string, password: string, name: string) {
@@ -22,6 +24,8 @@ export class AuthService {
     if (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+
+    this.logger.debug(`${supabaseData.user.email} has been created`);
 
     // 将supabase注册成功返回的信息存入users表 如果是第一个用户则为admin
     return this.prisma.public_users.create({
