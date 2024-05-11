@@ -11,7 +11,7 @@ export class ThoughtService {
   // 发布想法 将content和image数组传入
   async postThought(content: string, location?: string, images?: number[]) {
     try {
-      const result = await this.prisma.$transaction(async (prisma) => {
+      const result = await this.prisma.$transaction(async () => {
         const thought = await this.prisma.thought.create({
           data: {
             content: content,
@@ -153,7 +153,7 @@ export class ThoughtService {
   // 修改想法
   async updateThought(slug: string, content?: string, location?: string, images?: number[]) {
     try {
-      const result = await this.prisma.$transaction(async (prisma) => {
+      const result = await this.prisma.$transaction(async () => {
         const thought = await this.prisma.thought.update({
           where: {
             slug: slug
